@@ -1,6 +1,6 @@
 #! /usr/bin/env bash
 
-set -ex
+set -e
 
 if [ -z "${TAG}" ]; then
     echo "You need to set TAG envvar."
@@ -21,7 +21,7 @@ if [ -z "${DOCKER_FILE}" ]; then
     DOCKER_FILE="."
 fi
 
-if [ -z "${DOCKER_FILE}" ]; then
+if [ -z "${CLOUDBUILD_CONFIG}" ]; then
     CLOUDBUILD_CONFIG="./cloudbuild.yaml"
 fi
 
