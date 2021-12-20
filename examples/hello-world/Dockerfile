@@ -5,7 +5,7 @@ COPY app $APP_DIR
 
 #Override global variables
 ENV DOCUMENT_ROOT="${APP_DIR}/" \
-    SUPERVISOR_USER="foo" \ 
+    SUPERVISOR_USERNAME="foo" \ 
     SUPERVISOR_PASSWORD="bar"
 
 RUN chown -R www-data:www-data $APP_DIR

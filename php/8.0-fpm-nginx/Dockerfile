@@ -45,7 +45,7 @@ ENV NGINX_DIR=/etc/nginx \
     FRONT_CONTROLLER_FILE=index.php \
     BUILD_CONF_DIR=build-configs \
     SCRIPTS_DIR=/var/scripts/php-80 \
-    SUPERVISOR_USER="admin" \
+    SUPERVISOR_USERNAME="admin" \
     SUPERVISOR_PASSWORD="secret"
 
 # Expose port 9000 and start php-fpm server
