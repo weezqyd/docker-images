@@ -53,7 +53,7 @@ EXPOSE 8080
 
 ARG DEBUG_OUTPUT=false
 
-RUN apt-get install -y nginx-core nginx-common nginx nginx-full libnginx-mod-http-lua supervisor && nginx -V
+RUN apt-get install -yqq nginx-core nginx-common nginx nginx-full libnginx-mod-http-lua supervisor && nginx -V
 # Put other config and shell files into place.
 COPY "${BUILD_CONF_DIR}"/nginx/nginx.conf "${BUILD_CONF_DIR}"/nginx/fastcgi_params "${BUILD_CONF_DIR}"/nginx/gzip_params "${NGINX_DIR}"/
 COPY "${BUILD_CONF_DIR}"/nginx/nginx-app.conf "${BUILD_CONF_DIR}"/nginx/nginx-http.conf "${NGINX_USER_CONF_DIR}"/
