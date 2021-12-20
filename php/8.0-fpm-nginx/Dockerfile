@@ -60,6 +60,8 @@ COPY "${BUILD_CONF_DIR}"/nginx/nginx-app.conf "${BUILD_CONF_DIR}"/nginx/nginx-ht
 
 RUN chown -R www-data:www-data $NGINX_DIR
 
+RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini" 
+
 COPY "${BUILD_CONF_DIR}"/php/php.ini  "${PHP_USER_CONF_DIR}"/
 
 RUN chown -R www-data:www-data $PHP_USER_CONF_DIR
