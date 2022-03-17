@@ -66,7 +66,7 @@ COPY "${BUILD_CONF_DIR}"/php/php.ini  "${PHP_USER_CONF_DIR}"/
 
 RUN chown -R www-data:www-data $PHP_USER_CONF_DIR
 
-RUN nginx -t
+RUN nginx -t && apt-get clean -yqq && apt autoremove -yqq --purge
 
 COPY "${BUILD_CONF_DIR}"/supervisor/supervisord.conf  /etc/supervisor/supervisord.conf
 
