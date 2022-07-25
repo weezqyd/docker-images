@@ -1,5 +1,5 @@
 # Set the base image for subsequent instructions
-FROM php:8.0-fpm
+FROM php:8.1-fpm
 
 # Update packages
 RUN apt-get update --fix-missing
@@ -22,15 +22,8 @@ RUN chmod +x /usr/local/bin/install-php-extensions
 # Install needed extensions
 # Here you can install any other extension that you need during the test and deployment process
 RUN install-php-extensions  pdo_mysql pdo_pgsql curl intl \
-    gd xml zip bz2 soap pcntl bcmath gmp sockets protobuf \
-    grpc-stable sysvmsg sysvsem sysvshm redis apcu opcache @composer
-
-# Install GClod SDK
-RUN echo deb http://packages.cloud.google.com/apt cloud-sdk-$(lsb_release -cs) main | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
-
-RUN curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
-
-RUN apt-get update -y && apt-get install -y google-cloud-sdk
+gd xml zip bz2 soap pcntl bcmath gmp sockets protobuf \
+grpc-stable sysvmsg sysvsem sysvshm redis apcu opcache @composer
 
 #COPY --from=ochinchina/supervisord:latest /usr/local/bin/supervisord /usr/local/bin/supervisord
 
@@ -53,7 +46,7 @@ EXPOSE 8080
 
 ARG DEBUG_OUTPUT=false
 
-RUN apt-get install -yqq nginx-core nginx-common nginx nginx-full libnginx-mod-http-lua supervisor && nginx -V
+RUN  apt-get update --fix-missing && apt-get install -yqq nginx-core nginx-common nginx nginx-full libnginx-mod-http-lua supervisor && nginx -V
 # Put other config and shell files into place.
 COPY "${BUILD_CONF_DIR}"/nginx/nginx.conf "${BUILD_CONF_DIR}"/nginx/fastcgi_params "${BUILD_CONF_DIR}"/nginx/gzip_params "${NGINX_DIR}"/
 COPY "${BUILD_CONF_DIR}"/nginx/nginx-app.conf "${BUILD_CONF_DIR}"/nginx/nginx-http.conf "${NGINX_USER_CONF_DIR}"/
