@@ -37,7 +37,7 @@ ENV NGINX_DIR=/etc/nginx \
     PHP_USER_CONF_DIR=/usr/local/etc/php/conf.d \
     FRONT_CONTROLLER_FILE=index.php \
     BUILD_CONF_DIR=build-configs \
-    SCRIPTS_DIR=/var/scripts/php-80 \
+    SCRIPTS_DIR=/var/scripts/php-8.1 \
     SUPERVISOR_USERNAME="admin" \
     SUPERVISOR_PASSWORD="secret"
 
@@ -71,5 +71,5 @@ COPY scripts/* "${SCRIPTS_DIR}/"
 
 RUN chmod +x "${SCRIPTS_DIR}/start-container.sh" "${SCRIPTS_DIR}/composer.sh"
 
-ENTRYPOINT ["bash", "/var/scripts/php-80/start-container.sh" ]
+ENTRYPOINT ["bash", "${SCRIPTS_DIR}/start-container.sh" ]
 

@@ -69,5 +69,5 @@ COPY scripts/* "${SCRIPTS_DIR}/"
 
 RUN chmod +x "${SCRIPTS_DIR}/start-container.sh" "${SCRIPTS_DIR}/composer.sh" "${SCRIPTS_DIR}/install-composer.sh"
 
-ENTRYPOINT ["sh", "/var/scripts/php-8.1/start-container.sh" ]
+ENTRYPOINT ["sh", "${SCRIPTS_DIR}/start-container.sh" ]
 
