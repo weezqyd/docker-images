@@ -3,10 +3,12 @@ steps:
     args:
       [
         "build",
-        "-t",
-        "eu.gcr.io/${_GOOGLE_PROJECT_ID}/${_SERVICE_NAME}:${_TAG}",
+        "-f",
         "${_DOCKER_FILE}",
+        "-t",
+        "gcr.io/${_GOOGLE_PROJECT_ID}/${_SERVICE_NAME}:${_TAG}",
+        "${_CONTEXT}",
       ]
   # Push the container image to Container Registry
   - name: "gcr.io/cloud-builders/docker"
-    args: ["push", "eu.gcr.io/${_GOOGLE_PROJECT_ID}/${_SERVICE_NAME}:${_TAG}"]
+    args: ["push", "gcr.io/${_GOOGLE_PROJECT_ID}/${_SERVICE_NAME}:${_TAG}"]

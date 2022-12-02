@@ -17,9 +17,13 @@ if [ -z "${SERVICE_NAME}" ]; then
     exit 1
 fi
 
-if [ -z "${DOCKER_FILE}" ]; then
-    DOCKER_FILE="."
+if [ -z "${CONTEXT}" ]; then
+    CONTEXT="."
 fi
+if [ -z "${DOCKER_FILE}" ]; then
+    DOCKER_FILE="Dockerfile"
+fi
+
 
 if [ -z "${CLOUDBUILD_CONFIG}" ]; then
     CLOUDBUILD_CONFIG="./cloudbuild.yaml"
@@ -28,5 +32,5 @@ fi
 gcloud builds submit \
   --config "${CLOUDBUILD_CONFIG}" \
   --timeout 3600 \
-  --substitutions _GOOGLE_PROJECT_ID=$GOOGLE_PROJECT_ID,_TAG=$TAG,_SERVICE_NAME=$SERVICE_NAME,_DOCKER_FILE=$DOCKER_FILE \
+  --substitutions _GOOGLE_PROJECT_ID=$GOOGLE_PROJECT_ID,_TAG=$TAG,_SERVICE_NAME=$SERVICE_NAME,_DOCKER_FILE=$DOCKER_FILE,_CONTEXT=$CONTEXT \
   --async
