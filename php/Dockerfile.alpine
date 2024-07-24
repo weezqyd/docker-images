@@ -1,0 +1,71 @@
+ARG BASE_IMAGE=phpswoole/swoole:php8.2-alpine
+
+# Set the base image for subsequent instructions
+FROM ${BASE_IMAGE}
+
+ARG DEBUG_OUTPUT=false
+
+ENV SESSION_SAVE_PATH=/tmp/sessions \
+    WWW_HOME=/var/www \
+    PHP_USER_CONF_DIR=/usr/local/etc/php/conf.d \
+    FRONT_CONTROLLER_FILE=index.php \
+    BUILD_CONF_DIR=build-configs \
+    SCRIPTS_DIR=/var/scripts/php
+
+ENV APP_DIR=${WWW_HOME}/app
+ENV DOCUMENT_ROOT=${APP_DIR}/public
+
+RUN apk add --no-cache --virtual .build-deps git \
+    libtool make unzip libpq-dev libxml2-dev grpc-cpp \
+    libpng-dev libjpeg libxpm-dev libbz2 libzip-dev \
+    libvpx-dev libev-dev libcurl unixodbc build-base \
+    autoconf automake gmp-dev icu-dev curl-dev grpc-dev
+
+# Here you can install any other extension that you need during the test and deployment process
+ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
+
+RUN chmod +x /usr/local/bin/install-php-extensions
+
+# Install needed extensions
+# Here you can install any other extension that you need during the test and deployment process
+RUN install-php-extensions pdo_mysql curl intl sockets\
+    gd xml zip bz2 soap pcntl bcmath gmp \
+    sysvmsg sysvsem sysvshm redis apcu opcache
+
+#Install GRPC extension, the default installation method takes more than 30 minutes to complete
+RUN GRPC_VERSION=$(apk info grpc -d | grep grpc | cut -d- -f2) && \
+    git clone --depth 1 -b v${GRPC_VERSION} https://github.com/grpc/grpc /tmp/grpc && \
+    cd /tmp/grpc/src/php/ext/grpc && \
+    phpize && \
+    ./configure && \
+    make && \
+    make install && \
+    rm -rf /tmp/grpc && \
+    echo "extension=grpc.so" > $PHP_USER_CONF_DIR/grpc.ini
+
+# Install GClod SDK
+RUN apk add --update python3 supervisor
+
+#COPY --from=ochinchina/supervisord:latest /usr/local/bin/supervisord /usr/local/bin/supervisord
+
+# Expose 8080 as the container port
+EXPOSE 8080
+
+RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini" 
+
+COPY "${BUILD_CONF_DIR}"/php/php.ini  "${PHP_USER_CONF_DIR}"/
+
+RUN chown -R www-data:www-data $PHP_USER_CONF_DIR
+
+RUN apk del .build-deps
+
+COPY "${BUILD_CONF_DIR}"/supervisor/supervisord.conf  /etc/supervisor/supervisord.conf
+
+RUN mkdir -p ${SCRIPTS_DIR} ${APP_DIR}
+
+COPY scripts/* "${SCRIPTS_DIR}/" 
+
+RUN chmod +x "${SCRIPTS_DIR}/start-container.sh" "${SCRIPTS_DIR}/composer.sh" "${SCRIPTS_DIR}/install-composer.sh"
+
+CMD [ "php", "-S", "0.0.0.0:8080", ${DOCUMENT_ROOT} ]
+

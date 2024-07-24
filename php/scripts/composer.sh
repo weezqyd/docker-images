@@ -16,7 +16,7 @@ if  test -f "${APP_DIR}/composer.json" ; then
     # We want to remove when Cloud Build starts to use newer Docker.
 
     if [ -d "${APP_DIR}/vendor" ]; then 
-        rm -Rf "${APP_DIR}/vendor"
+        rm -rf "${APP_DIR}/vendor"
     fi
 
     # Run Composer.
@@ -26,7 +26,7 @@ if  test -f "${APP_DIR}/composer.json" ; then
         COMPOSER_FLAGS='--no-scripts --no-dev --prefer-dist'
     fi
     cd ${APP_DIR} && \
-        su -s /bin/ash www-data -c "/usr/local/bin/composer install \
+        su -s $SHELL www-data -c "/usr/local/bin/composer install \
           --optimize-autoloader \
           --no-interaction \
           --no-ansi \
