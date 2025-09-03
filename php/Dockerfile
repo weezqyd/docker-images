@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=phpswoole/swoole:php8.2
+ARG BASE_IMAGE=dunglas/frankenphp:8.2-bookworm
 
 # Set the base image for subsequent instructions
 FROM ${BASE_IMAGE}
@@ -14,6 +14,9 @@ ENV SESSION_SAVE_PATH=/tmp/sessions \
 
 ENV APP_DIR=${WWW_HOME}/app
 ENV DOCUMENT_ROOT=${APP_DIR}/public
+
+# Install Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Update packages
 RUN apt update --fix-missing
@@ -52,7 +55,7 @@ RUN git clone --depth=1 https://github.com/grpc/grpc /tmp/grpc && \
 
 #COPY --from=ochinchina/supervisord:latest /usr/local/bin/supervisord /usr/local/bin/supervisord
 
-RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini" 
+RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 COPY "${BUILD_CONF_DIR}"/php/php.ini  "${PHP_USER_CONF_DIR}"/
 RUN chown -R www-data:www-data $PHP_USER_CONF_DIR
 
@@ -64,13 +67,13 @@ RUN apt-get remove -yqq git libpq-dev \
     libxpm-dev zlib1g-dev libfreetype6-dev \
     libxml2-dev libexpat1-dev libbz2-dev \
     libgmp3-dev libldap2-dev unixodbc-dev \
-    libaspell-dev libsnmp-dev libzip-dev\
+    libaspell-dev libsnmp-dev libzip-dev \
     libpcre3-dev libtidy-dev gnupg2 lsb-release
 
-RUN apt-get clean -yqq && apt autoremove -yqq --purge
+RUN apt-get clean -yq && apt autoremove -yq --purge
 
 RUN mkdir -p ${SCRIPTS_DIR} ${APP_DIR}
-COPY scripts/* "${SCRIPTS_DIR}/" 
+COPY scripts/* "${SCRIPTS_DIR}/"
 RUN chmod +x "${SCRIPTS_DIR}/start-container.sh" "${SCRIPTS_DIR}/composer.sh"
 
 # Expose port 8080 as the default container port

@@ -13,5 +13,5 @@ Swoole is a high-performance networking framework using an event-driven, asynchr
 Run the command below to build and tag all images. Currently we support the following PHP versions. `8.1, 8.2, 8.3`.
 
 ```bash
-cd php && GOOGLE_PROJECT_ID=my-project SERVICE_NAME=laravel ZONE=europe ./build.sh
+cd php && GOOGLE_PROJECT_ID=my-project SERVICE_NAME=laravel ZONE=europe ./build-image.sh
 ```
